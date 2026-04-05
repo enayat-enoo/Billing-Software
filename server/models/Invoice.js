@@ -100,4 +100,4 @@ invoiceSchema.index({ createdAt: -1 });
 invoiceSchema.index({ paymentStatus: 1 });
 
 const Invoice = mongoose.model("Invoice", invoiceSchema);
-export default Invoice;
+module.exports = Invoice;

@@ -1,4 +1,4 @@
-const mongoose = required("mongoose");
+const mongoose = require("mongoose");
 
 const customerSchema = new mongoose.Schema(
   {
@@ -36,8 +36,5 @@ const customerSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-// Search index on phone for fast lookup
-customerSchema.index({ phone: 1 });
-
 const Customer = mongoose.model("Customer", customerSchema);
-export default Customer;
+module.exports = Customer;
