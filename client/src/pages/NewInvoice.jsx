@@ -16,7 +16,11 @@ const NewInvoice = () => {
   const [customer, setCustomer] = useState(location.state?.customer || null);
   const [phoneError, setPhoneError] = useState("");
   const [showRegisterForm, setShowRegisterForm] = useState(false);
-  const [newCustomer, setNewCustomer] = useState({ name: "", email: "", address: "" });
+  const [newCustomer, setNewCustomer] = useState({
+    name: "",
+    email: "",
+    address: "",
+  });
   const [searchLoading, setSearchLoading] = useState(false);
 
   // Items state
@@ -98,7 +102,9 @@ const NewInvoice = () => {
       setShowRegisterForm(false);
       setPhoneError("");
     } catch (err) {
-      setPhoneError(err.response?.data?.message || "Failed to register customer.");
+      setPhoneError(
+        err.response?.data?.message || "Failed to register customer.",
+      );
     }
   };
 
@@ -133,17 +139,24 @@ const NewInvoice = () => {
     }
 
     const validItems = items.filter(
-      (item) => item.name.trim() && parseFloat(item.price) > 0
+      (item) => item.name.trim() && parseFloat(item.price) > 0,
     );
     if (validItems.length === 0) {
       setError("Add at least one item with a name and price.");
       return;
     }
 
+    if (discountAmt > subtotal) {
+      setError("Discount cannot be greater than subtotal.");
+      return;
+    }
+
     if (paymentStatus === "partial") {
       const paid = parseFloat(amountPaid) || 0;
       if (paid <= 0 || paid >= grandTotal) {
-        setError("For partial payment, amount paid must be between 0 and grand total.");
+        setError(
+          "For partial payment, amount paid must be between 0 and grand total.",
+        );
         return;
       }
     }
@@ -177,29 +190,43 @@ const NewInvoice = () => {
   // ── Render ──────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-gray-50">
-
       {/* Navbar */}
       <nav className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <svg
+              className="w-4 h-4 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
             </svg>
           </div>
           <span className="font-semibold text-gray-800">Billing Software</span>
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate("/dashboard")}
-            className="text-sm text-gray-600 hover:text-gray-900 transition cursor-pointer">
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="text-sm text-gray-600 hover:text-gray-900 transition cursor-pointer"
+          >
             Dashboard
           </button>
-          <button onClick={() => navigate("/customers")}
-            className="text-sm text-gray-600 hover:text-gray-900 transition cursor-pointer">
+          <button
+            onClick={() => navigate("/customers")}
+            className="text-sm text-gray-600 hover:text-gray-900 transition cursor-pointer"
+          >
             Customers
           </button>
-          <button onClick={() => navigate("/invoices")}
-            className="text-sm text-gray-600 hover:text-gray-900 transition cursor-pointer">
+          <button
+            onClick={() => navigate("/invoices")}
+            className="text-sm text-gray-600 hover:text-gray-900 transition cursor-pointer"
+          >
             Invoices
           </button>
         </div>
@@ -216,15 +243,21 @@ const NewInvoice = () => {
 
           {/* Customer selected */}
           {customer ? (
-            <div className="flex items-center justify-between bg-blue-50
-                            border border-blue-200 rounded-xl px-4 py-3">
+            <div
+              className="flex items-center justify-between bg-blue-50
+                            border border-blue-200 rounded-xl px-4 py-3"
+            >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-blue-200 text-blue-700
-                                flex items-center justify-center font-semibold text-sm">
+                <div
+                  className="w-9 h-9 rounded-full bg-blue-200 text-blue-700
+                                flex items-center justify-center font-semibold text-sm"
+                >
                   {customer.name.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-800">{customer.name}</p>
+                  <p className="text-sm font-medium text-gray-800">
+                    {customer.name}
+                  </p>
                   <p className="text-xs text-gray-500">{customer.phone}</p>
                 </div>
               </div>
@@ -291,7 +324,10 @@ const NewInvoice = () => {
                       placeholder="Email (optional)"
                       value={newCustomer.email}
                       onChange={(e) =>
-                        setNewCustomer({ ...newCustomer, email: e.target.value })
+                        setNewCustomer({
+                          ...newCustomer,
+                          email: e.target.value,
+                        })
                       }
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-xl
                                  text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
@@ -302,7 +338,10 @@ const NewInvoice = () => {
                       placeholder="Address (optional)"
                       value={newCustomer.address}
                       onChange={(e) =>
-                        setNewCustomer({ ...newCustomer, address: e.target.value })
+                        setNewCustomer({
+                          ...newCustomer,
+                          address: e.target.value,
+                        })
                       }
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-xl
                                  text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
@@ -331,7 +370,6 @@ const NewInvoice = () => {
           <div className="space-y-3">
             {items.map((item, index) => (
               <div key={index} className="flex gap-2 items-start">
-
                 {/* Item Name */}
                 <input
                   type="text"
@@ -364,14 +402,20 @@ const NewInvoice = () => {
                              focus:border-transparent bg-white"
                 >
                   {UNITS.map((u) => (
-                    <option key={u} value={u}>{u}</option>
+                    <option key={u} value={u}>
+                      {u}
+                    </option>
                   ))}
                 </select>
 
                 {/* Price */}
                 <div className="relative w-28">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2
-                                   text-gray-400 text-sm">₹</span>
+                  <span
+                    className="absolute left-3 top-1/2 -translate-y-1/2
+                                   text-gray-400 text-sm"
+                  >
+                    ₹
+                  </span>
                   <input
                     type="number"
                     placeholder="Price"
@@ -385,10 +429,14 @@ const NewInvoice = () => {
                 </div>
 
                 {/* Total */}
-                <div className="w-24 px-3 py-2.5 bg-gray-50 border border-gray-200
-                                rounded-xl text-sm text-gray-600 text-right">
-                  ₹{((parseFloat(item.qty) || 0) * (parseFloat(item.price) || 0))
-                    .toLocaleString("en-IN")}
+                <div
+                  className="w-24 px-3 py-2.5 bg-gray-50 border border-gray-200
+                                rounded-xl text-sm text-gray-600 text-right"
+                >
+                  ₹
+                  {(
+                    (parseFloat(item.qty) || 0) * (parseFloat(item.price) || 0)
+                  ).toLocaleString("en-IN")}
                 </div>
 
                 {/* Remove */}
@@ -420,7 +468,6 @@ const NewInvoice = () => {
           </h2>
 
           <div className="space-y-3">
-
             {/* Discount */}
             <div className="flex items-center justify-between">
               <label className="text-sm text-gray-600">Discount (₹)</label>
@@ -446,7 +493,9 @@ const NewInvoice = () => {
                            focus:border-transparent bg-white"
               >
                 {[0, 5, 12, 18, 28].map((r) => (
-                  <option key={r} value={r}>{r === 0 ? "No GST" : `${r}%`}</option>
+                  <option key={r} value={r}>
+                    {r === 0 ? "No GST" : `${r}%`}
+                  </option>
                 ))}
               </select>
             </div>
@@ -474,10 +523,14 @@ const NewInvoice = () => {
                   </div>
                 </>
               )}
-              <div className="flex justify-between text-base font-bold text-gray-800
-                              border-t border-gray-100 pt-2">
+              <div
+                className="flex justify-between text-base font-bold text-gray-800
+                              border-t border-gray-100 pt-2"
+              >
                 <span>Grand Total</span>
-                <span>₹{grandTotal.toLocaleString("en-IN")}</span>
+                <span className={grandTotal < 0 ? "text-red-500" : ""}>
+                  ₹{grandTotal.toLocaleString("en-IN")}
+                </span>
               </div>
             </div>
           </div>
@@ -491,7 +544,9 @@ const NewInvoice = () => {
 
           {/* Payment Method */}
           <div className="mb-4">
-            <label className="text-sm text-gray-600 block mb-2">Payment Method</label>
+            <label className="text-sm text-gray-600 block mb-2">
+              Payment Method
+            </label>
             <div className="flex gap-2 flex-wrap">
               {PAYMENT_METHODS.map((method) => (
                 <button
@@ -499,10 +554,11 @@ const NewInvoice = () => {
                   onClick={() => setPaymentMethod(method)}
                   className={`px-4 py-2 rounded-xl text-sm font-medium capitalize
                               transition cursor-pointer border
-                              ${paymentMethod === method
-                      ? "bg-blue-600 text-white border-blue-600"
-                      : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"
-                    }`}
+                              ${
+                                paymentMethod === method
+                                  ? "bg-blue-600 text-white border-blue-600"
+                                  : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"
+                              }`}
                 >
                   {method}
                 </button>
@@ -512,7 +568,9 @@ const NewInvoice = () => {
 
           {/* Payment Status */}
           <div className="mb-4">
-            <label className="text-sm text-gray-600 block mb-2">Payment Status</label>
+            <label className="text-sm text-gray-600 block mb-2">
+              Payment Status
+            </label>
             <div className="flex gap-2">
               {["paid", "partial", "unpaid"].map((s) => (
                 <button
@@ -520,14 +578,15 @@ const NewInvoice = () => {
                   onClick={() => setPaymentStatus(s)}
                   className={`px-4 py-2 rounded-xl text-sm font-medium capitalize
                               transition cursor-pointer border
-                              ${paymentStatus === s
-                      ? s === "paid"
-                        ? "bg-green-600 text-white border-green-600"
-                        : s === "partial"
-                          ? "bg-yellow-500 text-white border-yellow-500"
-                          : "bg-red-500 text-white border-red-500"
-                      : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"
-                    }`}
+                              ${
+                                paymentStatus === s
+                                  ? s === "paid"
+                                    ? "bg-green-600 text-white border-green-600"
+                                    : s === "partial"
+                                      ? "bg-yellow-500 text-white border-yellow-500"
+                                      : "bg-red-500 text-white border-red-500"
+                                  : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"
+                              }`}
                 >
                   {s}
                 </button>
@@ -556,15 +615,19 @@ const NewInvoice = () => {
           {paymentStatus !== "paid" && (
             <div className="flex justify-between text-sm font-medium text-red-500 mt-3">
               <span>Balance Due</span>
-              <span>₹{balanceDue > 0 ? balanceDue.toLocaleString("en-IN") : 0}</span>
+              <span>
+                ₹{balanceDue > 0 ? balanceDue.toLocaleString("en-IN") : 0}
+              </span>
             </div>
           )}
         </div>
 
         {/* Error */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 text-sm
-                          rounded-xl px-4 py-3 mb-4">
+          <div
+            className="bg-red-50 border border-red-200 text-red-600 text-sm
+                          rounded-xl px-4 py-3 mb-4"
+          >
             {error}
           </div>
         )}
@@ -577,9 +640,10 @@ const NewInvoice = () => {
                      text-white font-semibold rounded-xl transition cursor-pointer
                      disabled:cursor-not-allowed text-sm"
         >
-          {submitting ? "Generating Invoice..." : `Generate Invoice — ₹${grandTotal.toLocaleString("en-IN")}`}
+          {submitting
+            ? "Generating Invoice..."
+            : `Generate Invoice — ₹${grandTotal.toLocaleString("en-IN")}`}
         </button>
-
       </div>
     </div>
   );

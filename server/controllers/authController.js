@@ -23,6 +23,7 @@ const login = async (req, res) => {
       { expiresIn: "7d" }
     );
 
+
     // Set httpOnly cookie
     res.cookie("token", token, {
       httpOnly: true,
